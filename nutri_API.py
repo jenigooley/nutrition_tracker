@@ -3,7 +3,6 @@ import requests
 import urllib
 import pprint
 import sys
-#import user_data
 
 user_item = {}
 food = input('Enter a food:')
@@ -36,11 +35,11 @@ def item_choice():
     print(user_item)
 
 class User():
-    def __init_(self, **kwargs):
+    def __init_(self, *args, **kwargs):
         for k,v in refined_results.items():
-            setattr(self, k, v)
-print(User) 
-    
-#user1 = user_data.User( 
-item_choice()
-User()
+            print(setattr(self, k, v))
+
+item_choice() 
+User() 
+
+#User() 
