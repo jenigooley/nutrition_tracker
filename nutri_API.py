@@ -2,15 +2,19 @@ import json
 import requests
 import urllib
 import pprint
-import sys
+from flask import Flask, render_template
+from flask import request, redirect
+
 
 user_item = {}
 food = input('Enter a food:')
-payload = {'results':'0:3','fields':'item_name,nf_calories,nf_serving_size_unit,nf_sugars,nf_total_fat','appId':'7f0a2caa','appKey':'65f3c1d9a1d3c6f7edcf2802023fe069'}
+payload = {'results':'0:3','fields':'item_name,nf_calories,nf_serving_size,nf_sugars,nf_total_fat','appId':'7f0a2caa','appKey':'65f3c1d9a1d3c6f7edcf2802023fe069'}
+
 print(food)
 
 try:    
-    r_search = requests.get('https://api.nutritionix.com/v1_1/search/' + food,  params=payload)
+    r_search = requests.get('https://api.nutritionix.com/v1_1/search/' + food,  
+    params=payload)
 except requests.exceptions.RequestException as e:
     #print(e)
     print("there is a connection error.")
@@ -39,7 +43,7 @@ class User():
         for k,v in refined_results.items():
             print(setattr(self, k, v))
 
-item_choice() 
-User() 
+if __name__=='__main__':
+    app.run(host="", port=8000,debug=True)
 
 #User() 
