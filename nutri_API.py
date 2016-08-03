@@ -1,14 +1,17 @@
 import json
 import requests
-import urllib
+import urllcdcdib
 import pprint
 from flask import Flask, render_template
 from flask import request, redirect
 
 
 user_item = {}
-food = input('Enter a food:')
-payload = {'results':'0:3','fields':'item_name,nf_calories,nf_serving_size,nf_sugars,nf_total_fat','appId':'7f0a2caa','appKey':'65f3c1d9a1d3c6f7edcf2802023fe069'}
+food = request.ge
+payload = {'results':'0:3',
+           'fields':'item_name,nf_calories,nf_serving_size,nf_sugars,nf_total_fat',
+           'appId':'7f0a2caa',
+           'appKey':'65f3c1d9a1d3c6f7edcf2802023fe069'}
 
 print(food)
 
