@@ -3,6 +3,7 @@ from flask import request, redirect
 import string
 import os
 import re 
+import nutri_API
 
 app = Flask(__name__)
 
