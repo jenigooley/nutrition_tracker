@@ -25,7 +25,6 @@ def api_call():
     r_search = r_search.json()
     results = [] 
     results = r_search['hits'] 
-   # print('RESULTS   ', results)
     #show user numbered list of top 3 results
     refined_results  = {i: item['fields']['item_name'] 
 			     for i, item in enumerate(results)} 
@@ -37,7 +36,6 @@ def api_call():
     count= int(input('Number of servings:'))
     for i in results:
 	if i['fields']['item_name'] == refined_results[item]:
-	    print (i)
 	    food_data.update(i)
     food_data['serving_amount'] = count
     food_data['username'] = username
@@ -46,6 +44,7 @@ def api_call():
     print(food_data)
     add_data = data_nutrition.NutritionData()
     add_data.add_nutrition(food_data)
+    add_data.meals(food_data)
 
 if __name__ == '__main__':
     api_call()
