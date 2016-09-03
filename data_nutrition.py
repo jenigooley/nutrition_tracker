@@ -27,11 +27,16 @@ class NutritionData():
 	self.c.execute('INSERT INTO meals (food_id, user_id, serving_amount) values (?,?, ?)', (self.food_id, user_id, serving_amount))	
 	self.conn.commit()
 
-    def daily_total(self, username, timestamp):
+    def user_date(self, username, timestamp):
 	self.c.execute('SELECT rowid FROM profiles where NAME = (?)',
 	(username,))
 	username_id = self.c.fetchone()[0]
-	self.c.execute('SELECT * FROM meals WHERE Timestamp like (?) and user_id = (?)', (timestamp + '%', username_id)) 
-	daily = self.c.fetchallr)
-	print daily
-	return daily
+	self.c.execute('SELECT food_id, serving_amount FROM meals WHERE Timestamp like (?) and user_id = (?)', (timestamp + '%', username_id)) 
+	user_date  = self.c.fetchall()
+	return user_date
+    
+    def nutrition_query(self, food):
+	self.c.execute('SELECT calories, sugar, fat FROM nutrition WHERE rowid =(?)', (food,))
+	food_stats = self.c.fetchone()
+	return food_stats
+	
