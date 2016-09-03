@@ -1,5 +1,4 @@
 import data_nutrition
-import collections
 
 def get_meals(db, user, date):
     """takes user, date, querys db and creates dict 
