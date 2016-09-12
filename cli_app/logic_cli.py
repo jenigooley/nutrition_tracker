@@ -2,10 +2,11 @@ import usermanager
 import re
 import data_nutrition
 import bmi
-
+import logic_cli
+import pprint
+import cli_access
 
 db = usermanager.UserManager()
-have_error = False
 
 LOGGED_IN = 1
 WRONG_PASSWORD = 2
@@ -40,4 +41,9 @@ def validate_email(email):
 def signup_user(username, password, email, height, weight):
     if validate_password and validate_email  :
 	db.create_user(username, password, email, height, weight)
-	
+	return True
+
+def access_granted(username):
+    if verify_login == LOGGED_IN or signup_user:	
+	cli_access.welcome_user(username)
+

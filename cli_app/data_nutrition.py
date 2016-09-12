@@ -19,11 +19,9 @@ class NutritionData():
     def meals(self, data ):
 	username = data['username']
 	serving_amount = data['serving_amount']
-	print(username)
 	self.c.execute('SELECT rowid FROM profiles where NAME = (?)',
 	(username,))
 	user_id = self.c.fetchone()[0]
-	print(user_id)
 	self.c.execute('INSERT INTO meals (food_id, user_id, serving_amount) values (?,?, ?)', (self.food_id, user_id, serving_amount))	
 	self.conn.commit()
 
@@ -39,4 +37,3 @@ class NutritionData():
 	self.c.execute('SELECT calories, sugar, fat FROM nutrition WHERE rowid =(?)', (food,))
 	food_stats = self.c.fetchone()
 	return food_stats
-	

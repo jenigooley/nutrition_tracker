@@ -1,4 +1,5 @@
 import logic_cli
+
 def main():
     """ interface takes user input for login or signup"""
 
@@ -16,8 +17,7 @@ def main():
 	    break
 
     if login == LOGGED_IN:	
-	raw_input('What do you want to do?')
-	pass
+	logic_cli.access_granted(username)
     
     #if login == 'WRONG_PASSWORD':
 	#print('Wrong Password')
@@ -47,6 +47,7 @@ def main():
 	weight = raw_input('Weight: ')
 	    
 	logic_cli.signup_user(username, password, email, height, weight)
+	logic_cli.access_granted(username)
 
 if __name__ == '__main__':
     main()
