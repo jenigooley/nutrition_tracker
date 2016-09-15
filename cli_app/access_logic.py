@@ -4,29 +4,33 @@ import data_nutrition
 import nutri_API
 import bmi
 import cli_access
+import daily_total
 
 db_profiles = usermanager.UserManager()
 db_nutrition = data_nutrition.NutritionData()
+nutri_api = nutri_API.FoodApi()
 
 def input_food(username, food):
-    nutri_API.api_call(username, food)
+    nutri_api.api_call(username, food)
 
-def add_food(item, count):
-    food_data = nutri_API.add_food(username, item, count)
+def add_food(username, item, count):
+    food_data = nutri_api.add_food(username, item, count)
     db_nutrition.add_nutrition(food_data)
-    print (food_data)
+    db_nutrition.add_meals(username, food_data)
 
-def get_food(food):
-   return db_nutrition.nutrition_query
-    
+def edit_height(username, height):
+    db_profiles.update_height(username, height)
+
+def edit_weight(username, weight):
+    db_profiles.update_weight(username, weight)
+    print ('Your weight is now ', weight)
+
+def delete_user(username):
+    db_profiles.remove_user(username)
 
 def get_food_totals(username, date):
-    return db_nutrition.user_date(username, date)
-    
+   return daily_total.main(username, date)
+
 def get_bmi(username):
-    bmi_stats = db_profiles.bmi_user(username)
-    return bmi.bmi(bmi_stats)
-
-def get_user_profile(username):
-    print usermanager.read_user(username)
-
+    stats =  db_profiles.user_bmi(username )
+    return bmi.view_bmi(*stats)
