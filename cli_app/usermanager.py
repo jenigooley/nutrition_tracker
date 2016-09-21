@@ -1,6 +1,7 @@
 import json
 import sqlite3
 
+
 class UserManager():
     """functions to add, amend and remove users"""
 
@@ -11,8 +12,7 @@ class UserManager():
     def verify_user(self, username):
         """takes username, confirms if in db, returns True or False"""
         try:
-            self.c.execute('SELECT name FROM profiles WHERE name=(?)',
-                        (username,))
+            self.c.execute('SELECT name FROM profiles WHERE name=(?)' (username,))
             user = self.c.fetchone()[0]
             return user == username
 
@@ -24,8 +24,7 @@ class UserManager():
             returns True or False """
 
         try:
-            self.c.execute('SELECT password FROM profiles WHERE name=(?)',
-                (username,))
+            self.c.execute('SELECT password FROM profiles WHERE name=(?)', (username,))
 
             db_pw = self.c.fetchone()[0]
             print(password)
@@ -39,8 +38,7 @@ class UserManager():
         """takes user strings, inserts row in profiles db"""
 
         try:
-            self.c.execute("INSERT INTO profiles VALUES (?,?,?,?,?)",
-                (username,password, email, weight, height))
+            self.c.execute("INSERT INTO profiles VALUES (?,?,?,?,?)", (username, password, email, weight, height))
             self.user_id = self.c.lastrowid
             self.conn.commit()
             return self.user_id
@@ -50,25 +48,25 @@ class UserManager():
 
     def update_height(self, username, weight):
         self.c.execute('UPDATE  profiles SET weight=? WHERE name=?',
-        (weight, username))
+                       (weight, username))
         return True
 
-    def update_weight(self,username, height):
+    def update_weight(self, username, height):
         self.c.execute('UPDATE profiles SET height=? WHERE name=?',
-        (height, username))
+                       (height, username))
         return True
 
     def remove_user(self, username):
         """take  username string, querys db for username then deletes row from table """
 
         row = self.c.execute("SELECT * FROM profiles WHERE name =?",
-        (username,))
+                             (username,))
         for i in row:
             user = i[1]
             print(user)
-        if user  == username:
+        if user == username:
             self.c.execute("SELECT rowid FROM profiles WHERE name=?",
-            (username,))
+                           (username,))
             row_id = self.c.fetchone()[0]
             print (row_id)
             self.c.execute("DELETE FROM meals WHERE user_id=?", (row_id,))
@@ -82,12 +80,11 @@ class UserManager():
         """take username string and returns readable user data"""
 
         self.c.execute("SELECT * FROM profiles WHERE name=?", (username,))
-        user_profile =  self.c.fetchone()
+        user_profile = self.c.fetchone()
         print user_profile
         return user_profile
 
     def user_bmi(self, username):
-        self.c.execute("SELECT height, weight FROM profiles WHERE name=?",
-        (username,))
+        self.c.execute("SELECT height, weight FROM profiles WHERE name=?", (username,))
         bmi_data = self.c.fetchone()
         return bmi_data

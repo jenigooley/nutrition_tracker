@@ -5,7 +5,8 @@ import bmi
 
 def welcome_user(username):
     action_list = ['add_food', 'get food totals',
-                    'edit profile', 'get bmi', 'view user profile']
+                   'add event', 'edit profile',
+                   'get bmi', 'view user profile']
     print (action_list)
     for num, item in enumerate(action_list, start=1):
         print (num, item)
@@ -21,9 +22,13 @@ def welcome(username, action):
     if action == '2':
         show_food_totals(username)
     if action == '3':
-        edit_user(username)
+        input_events(username)
     if action == '4':
+        edit_user(username)
+    if action == '5':
         show_bmi(username)
+    if action == '6':
+        show_user_profile(username)
 
 
 def input_food_item(username):
@@ -69,5 +74,17 @@ def show_bmi(username):
 
 
 def show_user_profile(username):
-    user_deets = access_logic.get_user_profile(username)
+    user_deets = access_logic.get_user(username)
     print user_deets
+
+
+def input_events(username):
+    category = raw_input('What type of event would you like to enter, (1)period or (2)sexual activity?')
+    if category == '1':
+        pain_num = raw_input('How severe was your pain today, on a scale of 1-5? ')
+        flow_num = raw_input('How plentiful was your flow today, on a scale of 1-5? ')
+        return 1
+    if category == '2':
+        rate_num = raw_input('How did you feel about your sexual existence today, on a scale of 1-5 ')
+        amount_num = raw_input('How many sexual expierences did you have today? ')
+        return 2

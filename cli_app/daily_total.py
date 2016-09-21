@@ -1,12 +1,12 @@
 import data_nutrition
+import data_tables
 
-
-def get_meals(db, username, date):
+def get_meals(db_events, username, date):
     """takes user, date, querys db and creates dict
-    {user_id : serving_amount} """
+    user_id : serving_amount """
 
     id_amount = {}
-    meals = db.user_date(username, date)
+    meals = db_events.user_date(username, date)
     if meals is not None:
         for i_d, amount in meals:
             id_amount[i_d] = amount
@@ -17,7 +17,7 @@ def get_meals(db, username, date):
 
 
 def get_stats_dict(db, id_amount):
-    """takes id_amount dict {food_id:serving_amount} and returns a
+    """takes id_amount dict food_id:serving_amount and returns a
        dict {food_id:(calories, sugar, fat)} """
 
     stats_dict = {}
@@ -48,8 +48,8 @@ def get_stats_total(id_amount, stats_dict):
             total_fiber += fiber * amount
             total_calcium += calcium * amount
         daily_totals = {'Calories: ': total_calories, 'Sugar': total_sugar,
-	                   'Fat': total_fat, 'Protein': total_protein,
-	                   'Fiber': total_fiber, 'Calcium': total_calcium}
+                        'Fat': total_fat, 'Protein': total_protein,
+                        'Fiber': total_fiber, 'Calcium': total_calcium}
         return daily_totals
     else:
         print('Invalid request.')
@@ -59,7 +59,8 @@ def get_stats_total(id_amount, stats_dict):
 def main(username, date):
 
     db = data_nutrition.NutritionData()
-    id_amount = get_meals(db, username, date)
+    db_events = data_tables.DataTables()
+    id_amount = get_meals(db_events, username, date)
     stats_dict = get_stats_dict(db, id_amount)
     stats_total = get_stats_total(id_amount, stats_dict)
     return stats_total
