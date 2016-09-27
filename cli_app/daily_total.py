@@ -56,10 +56,10 @@ def get_stats_total(id_amount, stats_dict):
         pass
 
 
-def main(username, date):
+def main(conn, username, date):
 
-    db = data_nutrition.NutritionData()
-    db_events = data_tables.DataTables()
+    db = data_nutrition.NutritionData(conn)
+    db_events = data_tables.DataTables(conn)
     id_amount = get_meals(db_events, username, date)
     stats_dict = get_stats_dict(db, id_amount)
     stats_total = get_stats_total(id_amount, stats_dict)

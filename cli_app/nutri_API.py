@@ -26,7 +26,6 @@ class FoodApi():
             sys.exit(1)
         r_search = r_search.json()
         self.results = r_search['hits']
-        print (self.results)
         """show user numbered list of top 3 results"""
         self.refined_results = {i: item['fields']['item_name']
                                 for i, item in enumerate(self.results)}

@@ -5,8 +5,8 @@ import sqlite3
 class UserManager():
     """functions to add, amend and remove users"""
 
-    def __init__(self):
-        self.conn = sqlite3.connect('./users.db')
+    def __init__(self, conn):
+        self.conn = conn
         self.c = self.conn.cursor()
 
     def verify_user(self, username):
@@ -49,11 +49,13 @@ class UserManager():
     def update_height(self, username, weight):
         self.c.execute('UPDATE  profiles SET weight=? WHERE name=?',
                        (weight, username))
+        self.conn.commit()
         return True
 
     def update_weight(self, username, height):
         self.c.execute('UPDATE profiles SET height=? WHERE name=?',
                        (height, username))
+        self.conn.commit()
         return True
 
     def remove_user(self, username):
@@ -65,11 +67,10 @@ class UserManager():
             user = i[1]
             print(user)
         if user == username:
-            self.c.execute("SELECT rowid FROM profiles WHERE name=?",
+            self.c.execute("SELECT id FROM profiles WHERE name=?",
                            (username,))
-            row_id = self.c.fetchone()[0]
-            print (row_id)
-            self.c.execute("DELETE FROM meals WHERE user_id=?", (row_id,))
+            i_d = self.c.fetchone()[0]
+            self.c.execute("DELETE FROM events WHERE user_id=?", (i_d,))
             self.c.execute("DELETE FROM profiles WHERE name=?", (username,))
             self.conn.commit()
             return True

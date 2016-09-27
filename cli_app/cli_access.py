@@ -11,7 +11,6 @@ def welcome_user(username):
     for num, item in enumerate(action_list, start=1):
         print (num, item)
     action = raw_input('What would you like to do ' + username + '? ')
-    print(action)
     welcome(username, action)
 
 
@@ -62,11 +61,11 @@ def edit_user(username):
         print ('Your weight is now ', weight)
     if edit_action == '3':
         confirm = raw_input('Are you sure you want to delete this user? (y/n) ')
-    if confirm == 'y':
-        access_logic.delete_user(username)
-        print ("You have been deleted.")
-    else:
-        print ('boy, bye')
+        if confirm == 'y':
+            access_logic.delete_user(username)
+            print ("You have been deleted.")
+        else:
+            print ('boy, bye')
 
 
 def show_bmi(username):
@@ -83,8 +82,10 @@ def input_events(username):
     if category == '1':
         pain_num = raw_input('How severe was your pain today, on a scale of 1-5? ')
         flow_num = raw_input('How plentiful was your flow today, on a scale of 1-5? ')
-        return 1
+        access_logic.add_events_periods(pain_num, flow_num)
+        access_logic.add_events_data(username, category)
     if category == '2':
         rate_num = raw_input('How did you feel about your sexual existence today, on a scale of 1-5 ')
         amount_num = raw_input('How many sexual expierences did you have today? ')
-        return 2
+        access_logic.add_events_sex(rate_num, amount_num)
+        access_logic.add_events_data(username, category)

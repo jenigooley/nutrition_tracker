@@ -6,7 +6,9 @@ import logic_cli
 import pprint
 import cli_access
 
-db = usermanager.UserManager()
+from access_logic import conn
+
+db = usermanager.UserManager(conn)
 
 LOGGED_IN = 1
 WRONG_PASSWORD = 2
@@ -43,7 +45,7 @@ def validate_email(email):
         return True
 
 
-def signup_user(username, password, email, height, weight):
+def signup_user(username, password, verify, email, height, weight):
     if validate_password(password, verify) and validate_email(email):
         db.create_user(username, password, email, height, weight)
         return True

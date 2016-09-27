@@ -1,0 +1,47 @@
+Api is abstration presented by one layer that calls to the next layer
+
+Call graph with RPCs  - remote procedure call
+
+Network Unreliaibility
+
+    Partially dropped RPC? Bundle important actions together
+
+    Dropped? retry
+
+    Duplicated RPC ? REST!
+
+
+## Representational State Transfer  :
+    Show me what end results will be, don't tell me what to do.
+
+
+RPC are hard
+
+        express functions
+        express return value
+        express errors
+        serialize and deserialize data
+
+HTTP is an RPC protocol
+
+    originally designed to transfer html ect but can do more
+    use features http already had for RPC
+
+Embrace HTTP verbs!
+
+    probably don't put verb in URL
+    use query params
+
+Use Status Codes
+
+Headers
+
+    Content Type - used by both client and server to indicate datatype being sent 
+    Accept is used by a client to request a specific type
+
+Practicalities
+
+    Separate subdomains for API and HTML
+    DONt need more verbs, nouns are good
+
+HTTP probably already does whatever feature you want.
