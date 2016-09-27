@@ -12,6 +12,7 @@ def get_profile(username):
     bmi = access_logic.get_bmi(username)
     profiles.update(bmi)
     profiles.update(user_stats)
+    #print ('profiles is', profiles) 
     print jsonify(profiles)
     return jsonify(profiles)
 

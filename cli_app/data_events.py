@@ -18,21 +18,28 @@ class DataEvents():
         print 'insert meals complete'
 
     def user_date(self, username, timestamp):
-        self.c.execute('SELECT id FROM profiles where NAME = (?)',
-                       (username,))
-        username_id = self.c.fetchone()[0]
-        print username_id
-        self.c.execute('SELECT reference FROM events WHERE user_id = (?)',
-                                         (username_id,))
-        event_reference = self.c.fetchone()[0]
-        food_serving = self.c.execute('SELECT food_id, serving_amount FROM meals WHERE Timestamp like (?) and meal_reference = (?)',
-                                      (timestamp + '%', event_reference))
-        if food_serving is not None:
-            user_date = self.c.fetchall()
-            print (user_date)
-            return user_date
-        else:
-            print ('That date or user is not valid.')
+        self.c.execute("SELECT serving_amount, food_id FROM profiles INNER JOIN  events INNER JOIN meals ON user_id=(?) AND id =user_id and meals. timestamp like (?)", (username, timestamp + '%'))
+        amount_food = self.c.fetchone()[0]
+        # self.c.execute('SELECT id FROM profiles where NAME = (?)',
+        #                (username,))
+        # username_id = self.c.fetchone()[0]
+        # print username_id
+        # user_event = self.c.execute('SELECT reference FROM events WHERE user_id = (?)',
+        #                                  (username_id,))
+        # print user_event
+        #
+        # if user_event is not None:
+        #     event_reference = self.c.fetchone()[0]
+        #     food_serving = self.c.execute('SELECT food_id, serving_amount FROM meals WHERE Timestamp like (?) and meal_reference = (?)',
+        #                                   (timestamp + '%', event_reference))
+        #     if food_serving is not None:
+        #         user_date = self.c.fetchall()
+        #         print (user_date)
+        #         return user_date
+        #     else:
+        #         print ('There is not meal data for that date and user')
+        # else:
+        #     print ('There is no food data for that date and user')
 
     def add_periods(self, pain_num, flow_num):
         self.c.execute('INSERT  INTO periods (pain, flow_amount) values(?, ?)',

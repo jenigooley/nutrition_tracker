@@ -1,19 +1,22 @@
 import data_nutrition
 import data_tables
 
-def get_meals(db_events, username, date):
-    """takes user, date, querys db and creates dict
-    user_id : serving_amount """
 
-    id_amount = {}
-    meals = db_events.user_date(username, date)
-    if meals is not None:
-        for i_d, amount in meals:
-            id_amount[i_d] = amount
-        return id_amount
+def get_tuple(db_events, username, date):
+    id_amount_tuple = db_events.user_date(username, date)
+    if id_amount_tuple != []:
+        meals = id_amount_tuple[0]
+        print meals
+        return meals
     else:
-        print ('Invalid request.')
-        pass
+        print ('There is no data for that date or user')
+
+
+def get_meals(i_d, amount):
+    """creates dict with user_id : serving_amount """
+    id_amount = {}
+    id_amount[i_d] = amount
+    return id_amount
 
 
 def get_stats_dict(db, id_amount):
@@ -60,7 +63,8 @@ def main(conn, username, date):
 
     db = data_nutrition.NutritionData(conn)
     db_events = data_tables.DataTables(conn)
-    id_amount = get_meals(db_events, username, date)
+    id_amount_tuple = get_tuple(db_events, username, date)
+    id_amount = get_meals(*id_amount_tuple)
     stats_dict = get_stats_dict(db, id_amount)
     stats_total = get_stats_total(id_amount, stats_dict)
     return stats_total

@@ -35,8 +35,9 @@ def add_food(username, item, count):
 def get_user(username):
     user_deets = db_profiles.read_user(username)
     profile_dict = {}
-    username, password, email, height, weight = user_deets
+    user_id, username, password, email, height, weight = user_deets
     profile_dict = {
+        'user_id': user_id,
         'username': username,
         'password': password,
         'email': email,

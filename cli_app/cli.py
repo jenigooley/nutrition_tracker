@@ -47,7 +47,7 @@ def main():
         height = raw_input('Height: ')
         weight = raw_input('Weight: ')
 
-        logic_cli.signup_user(username, verify, password, email, height, weight)
+        logic_cli.signup_user(username, password, verify, email, height, weight)
     logic_cli.access_granted(username)
 
 if __name__ == '__main__':
