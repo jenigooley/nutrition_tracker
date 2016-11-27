@@ -18,8 +18,14 @@ class DataEvents():
         print 'insert meals complete'
 
     def user_date(self, username, timestamp):
-        self.c.execute("SELECT serving_amount, food_id FROM profiles INNER JOIN  events INNER JOIN meals ON user_id=(?) AND id =user_id and meals. timestamp like (?)", (username, timestamp + '%'))
-        amount_food = self.c.fetchone()[0]
+        print ('user', username)
+        print ('time', timestamp)
+        print ('user_date is starting')
+        self.c.execute("SELECT food_id, serving_amount FROM profiles INNER JOIN  events INNER JOIN meals"
+                       " ON name=(?) AND id =user_id and reference=meal_reference and meals.timestamp like (?)",
+                       (username, timestamp + '%'))
+        amount_food = self.c.fetchall()
+        return amount_food
         # self.c.execute('SELECT id FROM profiles where NAME = (?)',
         #                (username,))
         # username_id = self.c.fetchone()[0]

@@ -1,31 +1,46 @@
 import data_nutrition
-import data_tables
+import data_events
+
+# def get_tuple(db_events, username, date):
+#     print ('get_tuple is starting')
+#     id_amount_tuple = db_events.user_date(username, date)
+#     print ('IAT', id_amount_tuple)
+#     if id_amount_tuple != []:
+#         meals = id_amount_tuple
+#         print ('meals', meals)
+#         return meals
+#     else:
+#         print ('There is no data for that date or user')
 
 
-def get_tuple(db_events, username, date):
-    id_amount_tuple = db_events.user_date(username, date)
-    if id_amount_tuple != []:
-        meals = id_amount_tuple[0]
-        print meals
-        return meals
-    else:
-        print ('There is no data for that date or user')
-
-
-def get_meals(i_d, amount):
+def get_meals(session, username, date):
     """creates dict with user_id : serving_amount """
+
     id_amount = {}
-    id_amount[i_d] = amount
-    return id_amount
+    for food_id, serving_amount in session.query(models.Profile, models.meals).filter(models.Profile.id).filter(models.Profile.user_id==username ).filter(models.Meal.user_id==models.Profile.user_id).all()
+        id_amount[food_id] = serving_amount
+        print ('id_amount', id_amount)
+        session.commit()
+        return id_amount
+    # meals = db_events.user_date(username, date)
+    print ('meals', meals)
+    # if meals is not None:
+    #id_amount = dict(meals)
+    # if meals is not None:
+    #     for i_d, amount in meals:
 
+    # else:
+    #     print ('Invalid request.')
+    #     pass
 
-def get_stats_dict(db, id_amount):
+def get_stats_dict(session, id_amount):
     """takes id_amount dict food_id:serving_amount and returns a
        dict {food_id:(calories, sugar, fat)} """
 
     stats_dict = {}
     for food_id in id_amount.keys():
-        stats = db.nutrition_query(food_id)
+        stats =
+        print ('stats', stats)
         food_stats = list(stats)
         stats_dict[food_id] = food_stats
     return stats_dict
@@ -59,13 +74,9 @@ def get_stats_total(id_amount, stats_dict):
         pass
 
 
-def main(conn, username, date):
-
-    db = data_nutrition.NutritionData(conn)
-    db_events = data_tables.DataTables(conn)
-    id_amount_tuple = get_tuple(db_events, username, date)
-    id_amount = get_meals(*id_amount_tuple)
-    stats_dict = get_stats_dict(db, id_amount)
+def main(session, username, date):
+    id_amount = get_meals(session, username, date)
+    stats_dict = get_stats_dict(session, id_amount)
     stats_total = get_stats_total(id_amount, stats_dict)
     return stats_total
 
