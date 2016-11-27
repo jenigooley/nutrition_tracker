@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 @app.route('/users/create', methods=['POST'])
 def add_user():
-    # if request.method == 'POST':
+
     user_data = request.json
     print('data', user_data)
     user = models.User(name=user_data.get('name'),
@@ -33,15 +33,16 @@ def add_user():
     print "SUCCESS"
     return json.dumps(user.as_dict_prof())
 
-@app.route('/users/<username>', methods=['GET', 'POST', 'DELETE'])
+@app.route('/users/<username>', methods=['GET', 'PUT', 'DELETE'])
 def get_user(username):
+
     if request.method == 'GET':
         users = {}
         for user in session.query(models.User).filter(models.User.name==username).all():
             print("Dict", user.as_dict_user())
             return (json.dumps(user.as_dict_user()))
 
-    if request.method == 'POST':
+    if request.method == 'PUT':
         print ("request", request.json)
         update_user = session.query(models.User).filter_by(name=username).update(user_data)
         session.commit()
@@ -81,7 +82,6 @@ def foods(username, food):
                                           Protein=food_data.get('nf_protein'),
                                           Fiber=food_data.get('nf_dietary_fiber'),
                                           Calcium=food_data.get('nf_calcium_dv'))
-            category = 'meals'
             id = session.query(models.User.id).filter_by(name=username).all()
             print (id)
             user_id = id
@@ -92,6 +92,33 @@ def foods(username, food):
             return jsonify(models.Nutrition.as_dict_nutr(food_stuff))
         else:
             return 'invalid request '
+
+@route('events/<username>/<event>', methods= ['GET', 'POST', 'PUT', 'DELETE'])
+def events(username, event):
+    '''create, read, update or delete event data'''
+
+    id = session.query(models.User.id).filter_by(name=username).all()
+    if method = 'POST':
+        event_data = request.json
+        event = models.Event(event_data.get('category'))
+        print (id)
+        user_id = id
+        session.add(event, user_id)
+
+    if method = 'GET':
+        events_query = session.query(models.Event).\
+                                     filter(models.Event.user_id=user_id).\
+                                     filter(models.Event.category=category).\
+                                     filter(models.Event.timestamp=data).all()
+        query_results = [i.__dict__ for i in events_query.all()]
+        print query_results
+        return query_results
+
+    if method = 'DELETE':
+        event_delete = session.query(models.Event).filter(name=username).delete()
+        session.commit()
+        if event_delete >= 1:
+            return ('Record was deleted')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
