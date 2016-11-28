@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 
 # engine = create_engine('sqlite:///eats_and_bleeds.db', echo=True)
@@ -69,9 +70,9 @@ class Event(Base):
     __tablename__ = 'events'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer    )
+    user_id = Column(Integer)
     category = Column(String)
-    timestamp = Column(String)
+    timestamp = Column(server_default=func.now(), onupdate=func.current_timestamp())
 
 
 
@@ -100,7 +101,7 @@ class Period(Base):
     event = relationship(Event, backref='periods')
 
     def as_dict_period(self):
-        return {'id':id, 'flow_amount': self.flow_amount, 'pain': self.pain, 'event_id': self.event_id}
+        return {'id':self.id, 'flow_amount': self.flow_amount, 'pain': self.pain, 'event_id': self.event_id}
 
 class SexActivity(Base):
     __tablename__ = 'sex_activities'

@@ -24,14 +24,14 @@ def add_user():
     user_data = request.json
     print('data', user_data)
     user = models.User(name=user_data.get('name'),
-                          password=user_data.get('password'),
-                          email=user_data.get('email'),
-                          height=user_data.get('height'),
-                          weight=user_data.get('weight'))
+                        password=user_data.get('password'),
+                        email=user_data.get('email'),
+                        height=user_data.get('height'),
+                        weight=user_data.get('weight'))
     session.add(user)
     session.commit()
     print "SUCCESS"
-    return json.dumps(user.as_dict_prof())
+    return json.dumps(user.as_dict_user())
 
 @app.route('/users/<username>', methods=['GET', 'PUT', 'DELETE'])
 def get_user(username):
@@ -93,28 +93,38 @@ def foods(username, food):
         else:
             return 'invalid request '
 
-@route('events/<username>/<event>', methods= ['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/events/<username>/<event>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
 def events(username, event):
     '''create, read, update or delete event data'''
 
-    id = session.query(models.User.id).filter_by(name=username).all()
-    if method = 'POST':
-        event_data = request.json
-        event = models.Event(event_data.get('category'))
-        print (id)
-        user_id = id
-        session.add(event, user_id)
 
-    if method = 'GET':
-        events_query = session.query(models.Event).\
-                                     filter(models.Event.user_id=user_id).\
-                                     filter(models.Event.category=category).\
-                                     filter(models.Event.timestamp=data).all()
+
+    if request.method == 'POST':
+        user_id = session.query(models.User.id).filter_by(name=username).first()
+        print user_id
+        event_data = request.json
+        event = models.Event(category=event)
+        session.add(event, user_id)
+        session.commit()
+        user_id = session.query(models.User.id).filter_by(name=username).first()
+        if event == 'period':
+            specific_event = models.Period(flow_amount=event_data.get('flow_amount'),
+                                            pain=event_data.get('pain'))
+        if event == 'sex_activities':
+            specific_event = models.SexActivity(rating=event_data.get('rating'),
+                                                amount=event_data.get('amount'))
+        session.add(specific_event)
+        session.commit()
+
+
+    if request.method == 'GET':
+        date = event_data['date']
+        events_query = session.query(models.Event).filter(user_id=user_id).filter(category=event).filter(timestamp=date).all()
         query_results = [i.__dict__ for i in events_query.all()]
         print query_results
         return query_results
 
-    if method = 'DELETE':
+    if request.method == 'DELETE':
         event_delete = session.query(models.Event).filter(name=username).delete()
         session.commit()
         if event_delete >= 1:
