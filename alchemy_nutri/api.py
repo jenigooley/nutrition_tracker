@@ -7,6 +7,8 @@ import models
 import bmi
 import daily_total
 from nutri_API import FoodApi
+from time import strftime, strptime
+import datetime
 
 engine = create_engine('sqlite:///eats_and_bleeds.db', echo=True)
 Base = declarative_base()
@@ -64,7 +66,7 @@ def foods(username, food):
     #     return jsonify(totals)
     if request.method == 'POST':
         print ("request", request.json)
-        nutri_query = session.query(models.Nutrition).filter(food == '%food%').all()
+        nutri_query = session.query(models.Nutrition).filter(food == '%' + food + '%').all()
         print ('QUERY', nutri_query)
         if nutri_query == []:
             count_choice = json.loads(request.data)
@@ -89,43 +91,57 @@ def foods(username, food):
             session.add(food_stuff)
             session.add(user_id, 'meals')
             session.commit()
-            return jsonify(models.Nutrition.as_dict_nutr(food_stuff))
+            return json.dumps(models.Nutrition.as_dict_nutr(food_stuff))
         else:
             return 'invalid request '
 
-@app.route('/events/<username>/<event>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
-def events(username, event):
+@app.route('/events/<username>/<category>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
+def events(username, category):
     '''create, read, update or delete event data'''
 
-
-
     if request.method == 'POST':
-        user_id = session.query(models.User.id).filter_by(name=username).first()
-        print user_id
         event_data = request.json
-        event = models.Event(category=event)
-        session.add(event, user_id)
-        session.commit()
         user_id = session.query(models.User.id).filter_by(name=username).first()
-        if event == 'period':
+        print user_id[0]
+        event_obj = models.Event(category=category, user_id=user_id[0])
+        session.add(event_obj)
+
+        if category == 'period':
             specific_event = models.Period(flow_amount=event_data.get('flow_amount'),
-                                            pain=event_data.get('pain'))
-        if event == 'sex_activities':
+                                           pain=event_data.get('pain'),
+                                            event=event_obj)
+            specific_event_dict = models.Period.as_dict_period(specific_event)
+
+        if category == 'sex_activities':
             specific_event = models.SexActivity(rating=event_data.get('rating'),
-                                                amount=event_data.get('amount'))
+                                                amount=event_data.get('amount'),
+                                                event=event_obj)
+            specific_event_dict = models.SexActivity.as_dict_sex_activity(specific_event)
+
         session.add(specific_event)
         session.commit()
-
+        return json.dumps(specific_event_dict)
 
     if request.method == 'GET':
+        event_data = request.json
+        print ("DATA", event_data)
+        print ("EVENT", category)
+        user_id = session.query(models.User.id).filter_by(name=username).first()
         date = event_data['date']
-        events_query = session.query(models.Event).filter(user_id=user_id).filter(category=event).filter(timestamp=date).all()
-        query_results = [i.__dict__ for i in events_query.all()]
-        print query_results
-        return query_results
+
+        date_object = strptime(date, '%m-%d-%Y')
+        print ('DATEOBJ', date_object)
+        print ('DATE', date)
+        print ('USER',user_id[0])
+        query_results =[]
+        for event in session.query(models.Event).filter(models.Event.user_id==user_id[0], models.Event.category==category, models.Event.date_time==date_object).all():
+            print ('EVNET DICT', event.as_dict_events())
+            query_results.append(event.as_dict_events())
+        return json.dumps(query_results)
 
     if request.method == 'DELETE':
-        event_delete = session.query(models.Event).filter(name=username).delete()
+        user_id = session.query(models.User.id).filter_by(name=username).first()
+        event_delete = session.query(models.Event).filter(user_id=user_id[0]).delete()
         session.commit()
         if event_delete >= 1:
             return ('Record was deleted')

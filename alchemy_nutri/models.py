@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+import datetime
+
 
 
 # engine = create_engine('sqlite:///eats_and_bleeds.db', echo=True)
@@ -72,9 +74,10 @@ class Event(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
     category = Column(String)
-    timestamp = Column(server_default=func.now(), onupdate=func.current_timestamp())
+    date_time = Column(DateTime, default=datetime.datetime.utcnow)
 
-
+    def as_dict_events(self):
+        return {'id':self.id, 'user_id':self.user_id, 'category':self.category, 'date_time':self.date_time}
 
 class Meal(Base):
     __tablename__ = 'meals'
@@ -82,13 +85,12 @@ class Meal(Base):
     id = Column(Integer, primary_key=True)
     food_id = Column(Integer)
     serving_amount = Column(Integer)
-    timestamp = Column(String)
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship(Event, backref='meals')
 
-    def as_dict_meals():
-        return {'id': self.meal_reference, 'food_id': self.food_id,
-                'serving_amount': self.serving_amount, 'timestamp': self.timestamp, 'user_id': self.user_id  }
+    def as_dict_meals(self):
+        return {'id': self.id, 'food_id': self.food_id,
+                'serving_amount': self.serving_amount, 'timestamp': self.timestamp, 'user_id': self.user_id}
 
 
 class Period(Base):
