@@ -128,7 +128,6 @@ def events(username, category):
         print ("EVENT", category)
         user_id = session.query(models.User.id).filter_by(name=username).first()
         date = event_data['date']
-
         date_object = strptime(date, '%m-%d-%Y')
         print ('DATEOBJ', date_object)
         print ('DATE', date)
