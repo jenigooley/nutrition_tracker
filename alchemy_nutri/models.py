@@ -49,13 +49,13 @@ class Nutrition(Base):
     __tablename__ = 'nutrition'
 
     id = Column(Integer, primary_key=True)
-    food = Column(String)
-    Calories = Column(Integer)
-    Fat = Column(Integer)
-    Sugar = Column(Integer)
-    Protein = Column(Integer)
-    Fiber = Column(Integer)
-    Calcium = Column(Integer)
+    food = Column(String, default='human')
+    Calories = Column(Integer, default=0)
+    Fat = Column(Integer, default=0)
+    Sugar = Column(Integer, default=0)
+    Protein = Column(Integer, default=0)
+    Fiber = Column(Integer, default=0)
+    Calcium = Column(Integer, default=0)
 
     def as_dict_nutr(self):
         return {'id': self.id, 'food': self.food,

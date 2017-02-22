@@ -9,6 +9,7 @@ import daily_total
 from nutri_API import FoodApi
 from time import strftime, strptime
 import datetime
+from sqlalchemy import Date, cast
 
 engine = create_engine('sqlite:///eats_and_bleeds.db', echo=True)
 Base = declarative_base()
@@ -26,14 +27,15 @@ def add_user():
     user_data = request.json
     print('data', user_data)
     user = models.User(name=user_data.get('name'),
-                        password=user_data.get('password'),
-                        email=user_data.get('email'),
-                        height=user_data.get('height'),
-                        weight=user_data.get('weight'))
+                       password=user_data.get('password'),
+                       email=user_data.get('email'),
+                       height=user_data.get('height'),
+                       weight=user_data.get('weight'))
     session.add(user)
     session.commit()
     print "SUCCESS"
     return json.dumps(user.as_dict_user())
+
 
 @app.route('/users/<username>', methods=['GET', 'PUT', 'DELETE'])
 def get_user(username):
@@ -57,22 +59,23 @@ def get_user(username):
         if user_delete >= 1:
             return ('Record was deleted')
 
-@app.route('/food/<username>/<food>', methods=['GET', 'POST'])
-def foods(username, food):
-    # if request.method == 'GET':
-    #     date = '2016-09-27'
-    #     totals = daily_total.main(session, username, date)
-    #     print jsonify(totals)
-    #     return jsonify(totals)
+
+@app.route('/food/<username>', methods=['POST'])
+def foods(username):
+    print ('HI')
     if request.method == 'POST':
-        print ("request", request.json)
-        nutri_query = session.query(models.Nutrition).filter(food == '%' + food + '%').all()
+        print ('request', request.json)
+        data = request.json
+        print data
+        food = data['food']
+        nutri_query = session.query(models.Nutrition).filter(food == '%' + food + '%').first()
         print ('QUERY', nutri_query)
         if nutri_query == []:
-            count_choice = json.loads(request.data)
+            # count_choice = json.loads(request.data)
             # {"count": 1, "choice": 3}
-            choice = count_choice["choice"]
-            count = count_choice["count"]
+            choice = data["choice"]
+            print ('CHOICE', choice)
+            count = data["count"]
             nutri.api_call(username, food)
             food_data = nutri.add_food(username, choice, count)
             print ('FOOD stuff', food_data)
@@ -84,23 +87,29 @@ def foods(username, food):
                                           Protein=food_data.get('nf_protein'),
                                           Fiber=food_data.get('nf_dietary_fiber'),
                                           Calcium=food_data.get('nf_calcium_dv'))
-            id = session.query(models.User.id).filter_by(name=username).all()
-            print (id)
-            user_id = id
-            category = 'meals'
-            session.add(food_stuff)
-            session.add(user_id, 'meals')
-            session.commit()
-            return json.dumps(models.Nutrition.as_dict_nutr(food_stuff))
-        else:
-            return 'invalid request '
+        id = session.query(models.User.id).filter_by(name=username).first()
+        print (id)
+        user_id = id
+        category = 'meals'
+        session.add(food_stuff)
+        # session.add(user_id, 'meals')
+        session.commit()
+        event_stuff = models.Event(user_id=str(user_id), category='meals')
+        session.add(event_stuff)
+        session.commit()
+        return json.dumps(models.Nutrition.as_dict_nutr(food_stuff))
+    else:
+        return 'invalid request '
 
-@app.route('/events/<username>/<category>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
-def events(username, category):
+@app.route('/events/<username>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
+def events(username):
     '''create, read, update or delete event data'''
 
     if request.method == 'POST':
         event_data = request.json
+        category = event_data['category']
+        print('CATEGORY', category)
+        # date = event_data['date']
         user_id = session.query(models.User.id).filter_by(name=username).first()
         print user_id[0]
         event_obj = models.Event(category=category, user_id=user_id[0])
@@ -123,20 +132,28 @@ def events(username, category):
         return json.dumps(specific_event_dict)
 
     if request.method == 'GET':
-        event_data = request.json
-        print ("DATA", event_data)
-        print ("EVENT", category)
+        date = request.args.get('date')
+        category = request.args.get('category')
         user_id = session.query(models.User.id).filter_by(name=username).first()
-        date = event_data['date']
-        date_object = strptime(date, '%m-%d-%Y')
-        print ('DATEOBJ', date_object)
+        print ("EVENT", category)
+        start_time = datetime.datetime.strptime(date, '%m-%d-%Y')
+        delta = datetime.timedelta(hours=23, minutes=59, seconds=59)
+        end_time =  (start_time + delta)
         print ('DATE', date)
         print ('USER',user_id[0])
+        print ('start_time', start_time)
+        print ('END_time', end_time)
+        print ('DELTA', delta)
         query_results =[]
-        for event in session.query(models.Event).filter(models.Event.user_id==user_id[0], models.Event.category==category, models.Event.date_time==date_object).all():
-            print ('EVNET DICT', event.as_dict_events())
+        for event in session.query(models.Event).filter(models.Event.user_id==user_id[0],
+                                                        models.Event.category==category,
+                                                        models.Event.date_time >= start_time,
+                                                        models.Event.date_time <= end_time):
+
+            print ('EVENT DICT', event.as_dict_events())
+
             query_results.append(event.as_dict_events())
-        return json.dumps(query_results)
+        return json.dumps(str(query_results))
 
     if request.method == 'DELETE':
         user_id = session.query(models.User.id).filter_by(name=username).first()
@@ -147,3 +164,5 @@ def events(username, category):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+#
+# curl -H "Content-Type: application/json" -X POST -d '{"food":"beets"}'  http://localhost:5000/food/jeni
