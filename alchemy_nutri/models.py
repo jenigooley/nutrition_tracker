@@ -83,7 +83,7 @@ class Meal(Base):
     __tablename__ = 'meals'
 
     id = Column(Integer, primary_key=True)
-    food_id = Column(Integer)
+    food_id = Column(Integer, ForeignKey('nutrition.id'))
     serving_amount = Column(Integer)
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship(Event, backref='meals')

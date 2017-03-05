@@ -1,0 +1,21 @@
+.App {
+  text-align: center;
+
+}
+
+.header{
+  background-image: url(mensis-burger.jpg);
+}
+.userBox   {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.eventBox   {
+  background-color: pink;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}

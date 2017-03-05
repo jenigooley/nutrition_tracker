@@ -39,6 +39,7 @@ def add_user():
 
 @app.route('/users/<username>', methods=['GET', 'PUT', 'DELETE'])
 def get_user(username):
+    '''get user profile json'''
 
     if request.method == 'GET':
         users = {}
@@ -58,35 +59,38 @@ def get_user(username):
         session.commit()
         if user_delete >= 1:
             return ('Record was deleted')
-
+top_three = ''
 
 @app.route('/food/<username>', methods=['POST'])
-def foods(username):
-    print ('HI')
+def get_food_nutriton(username):
+    '''add food item'''
     if request.method == 'POST':
-        print ('request', request.json)
         data = request.json
-        print data
+        # print data
         food = data['food']
-        nutri_query = session.query(models.Nutrition).filter(food == '%' + food + '%').first()
-        print ('QUERY', nutri_query)
-        if nutri_query == []:
-            # count_choice = json.loads(request.data)
-            # {"count": 1, "choice": 3}
-            choice = data["choice"]
-            print ('CHOICE', choice)
-            count = data["count"]
-            nutri.api_call(username, food)
-            food_data = nutri.add_food(username, choice, count)
-            print ('FOOD stuff', food_data)
+        refined, results = nutri.api_call(username, food)
+        top_three = (json.dumps(refined))
+        print top_three
+        return(top_three)
 
-            food_stuff = models.Nutrition(food=food_data.get('item_name'),
-                                          Calories=food_data.get('nf_calories'),
-                                          Sugar=food_data.get('nf_sugars'),
-                                          Fat=food_data.get('nf_total_fat'),
-                                          Protein=food_data.get('nf_protein'),
-                                          Fiber=food_data.get('nf_dietary_fiber'),
-                                          Calcium=food_data.get('nf_calcium_dv'))
+
+@app.route('/food/<username>/count', methods=['POST'])
+def get_nutrition_count(username):
+    if request.method == 'POST':
+        data = request.json
+        choice = data["choice"]
+        print ('CHOICE', choice)
+        count = data["count"]
+        food_data = nutri.add_food(username, choice, count)
+        print ('FOOD stuff', food_data)
+
+        food_stuff = models.Nutrition(food=food_data.get('item_name'),
+                                      Calories=food_data.get('nf_calories'),
+                                      Sugar=food_data.get('nf_sugars'),
+                                      Fat=food_data.get('nf_total_fat'),
+                                      Protein=food_data.get('nf_protein'),
+                                      Fiber=food_data.get('nf_dietary_fiber'),
+                                      Calcium=food_data.get('nf_calcium_dv'))
         id = session.query(models.User.id).filter_by(name=username).first()
         print (id)
         user_id = id
@@ -96,10 +100,13 @@ def foods(username):
         session.commit()
         event_stuff = models.Event(user_id=str(user_id), category='meals')
         session.add(event_stuff)
+        meal_stuff = models.Meal(food_id=food_stuff, serving_amount=count, event_id=event_stuff)
+        session.add(meal_stuff)
         session.commit()
+
         return json.dumps(models.Nutrition.as_dict_nutr(food_stuff))
-    else:
-        return 'invalid request '
+        # else:
+#     return 'invalid request '
 
 @app.route('/events/<username>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
 def events(username):
@@ -153,7 +160,7 @@ def events(username):
             print ('EVENT DICT', event.as_dict_events())
 
             query_results.append(event.as_dict_events())
-        return json.dumps(str(query_results))
+        return json.dumps(query_results)
 
     if request.method == 'DELETE':
         user_id = session.query(models.User.id).filter_by(name=username).first()
