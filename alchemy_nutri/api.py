@@ -68,10 +68,9 @@ def get_food_nutriton(username):
         data = request.json
         # print data
         food = data['food']
-        refined, results = nutri.api_call(username, food)
-        top_three = (json.dumps(refined))
+        top_three = nutri.api_call(username, food)
         print top_three
-        return(top_three)
+        return(json.dumps(top_three))
 
 
 @app.route('/food/<username>/count', methods=['POST'])
@@ -92,15 +91,16 @@ def get_nutrition_count(username):
                                       Fiber=food_data.get('nf_dietary_fiber'),
                                       Calcium=food_data.get('nf_calcium_dv'))
         id = session.query(models.User.id).filter_by(name=username).first()
-        print (id)
         user_id = id
         category = 'meals'
         session.add(food_stuff)
         # session.add(user_id, 'meals')
         session.commit()
         event_stuff = models.Event(user_id=str(user_id), category='meals')
+        print event_stuff.id
+        print event_stuff
         session.add(event_stuff)
-        meal_stuff = models.Meal(food_id=food_stuff, serving_amount=count, event_id=event_stuff)
+        meal_stuff = models.Meal(food_id=food_stuff.id, serving_amount=count, event_id=event_stuff.id)
         session.add(meal_stuff)
         session.commit()
 

@@ -66,7 +66,7 @@ class Nutrition(Base):
     #     return "<User(id='%s', food='%s', calories='%s', fat='%s', sugar='%s', protein='%s', fiber='%s', calcium='%s')>" % (
     #                   self.id, self.food, self.Calories, self.Fat, self.Sugar, self.Protein, self.Fiber, self.Calcium)
     #
-
+# CREAT TABLE meals (id INTEGER PRIMARY KEY, food_id INTEGER, serving_amount Integer, event_id INTEGER))
 
 class Event(Base):
     __tablename__ = 'events'
@@ -87,10 +87,11 @@ class Meal(Base):
     serving_amount = Column(Integer)
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship(Event, backref='meals')
+    nutrition = relationship(Nutrition, backref='meals')
 
     def as_dict_meals(self):
         return {'id': self.id, 'food_id': self.food_id,
-                'serving_amount': self.serving_amount, 'timestamp': self.timestamp, 'user_id': self.user_id}
+                'serving_amount': self.serving_amount, 'user_id': self.user_id}
 
 
 class Period(Base):
