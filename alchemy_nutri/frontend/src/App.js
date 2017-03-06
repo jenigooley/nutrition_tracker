@@ -5,9 +5,6 @@ import './App.css';
 const App = React.createClass({
   getInitialState(){
     return {
-      header:{
-        image: 'mensis-burger.jpg'
-      },
       user: {
         name: '',
         weight: '',
@@ -56,9 +53,6 @@ const App = React.createClass({
   render() {
     return (
       <div className='App'>
-      <Header
-        image={this.state.header.image}
-      />
         <UserInfo
           name={this.state.user.name}
           weight={this.state.user.weight}
@@ -106,13 +100,8 @@ const FoodInput = (props) => {
   <form onSubmit={props.submitCallback}>
   <input type='text' value={props.food} onChange={props.changeCallback}/>
   </form>
-)
+ )
 }
 
-const Header = (props) => {
-  <div className='header'>
-  <img src={props.image}/>
-  }>
-}
 
 export default App;
