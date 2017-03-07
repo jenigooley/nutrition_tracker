@@ -16,18 +16,22 @@ const App = React.createClass({
         flow_amount: 0
       },
       food: ''
-
     }
   },
 
   postFood(e){
     e.preventDefault()
     const data ={choice:1, count: 2, food: this.state.food}
+    console.log(this.state.food)
     fetch('/food/jeni', {
       method: 'POST',
-      body: data
+      body: JSON.stringify(data),
+      headers: new Headers({
+          'Content-Type': 'application/json'
+      })
     })
   },
+
 
   foodChange(e){
     this.setState({
@@ -38,9 +42,10 @@ const App = React.createClass({
   componentDidMount(){
     fetch('/users/jeni')
     .then(response => {
-      response.json().then(json => {
+      return(
+      response.json())
+    }).then(json => {
       this.setState({user: json})
-      })
     })
     // fetch('/events/jeni?category=period&date=02-20-2017')
     // .then(response => {
@@ -53,6 +58,8 @@ const App = React.createClass({
   render() {
     return (
       <div className='App'>
+      <div className='header'></div>
+       <div className="App-header" style={{ display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
         <UserInfo
           name={this.state.user.name}
           weight={this.state.user.weight}
@@ -63,6 +70,7 @@ const App = React.createClass({
           pain={this.state.events.pain}
           flow_amount={this.state.events.flow_amount}
         />
+        </div>
         <FoodInput
           changeCallback={this.foodChange}
           submitCallback={this.postFood}

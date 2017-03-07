@@ -59,14 +59,15 @@ def get_user(username):
         session.commit()
         if user_delete >= 1:
             return ('Record was deleted')
-top_three = ''
+
 
 @app.route('/food/<username>', methods=['POST'])
 def get_food_nutriton(username):
     '''add food item'''
+    
     if request.method == 'POST':
         data = request.json
-        # print data
+        print data        # print data
         food = data['food']
         top_three = nutri.api_call(username, food)
         print top_three

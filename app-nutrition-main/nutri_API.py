@@ -15,8 +15,8 @@ class FoodApi():
 
         payload = {'results': '0:3',
                    'fields': '*',
-                   'appId': '',
-                   'appKey': ''}
+                   'appId': '7f0a2caa',
+                   'appKey': '65f3c1d9a1d3c6f7edcf2802023fe069'}
         try:
             r_search = requests.get(
                                     'https://api.nutritionix.com/v1_1/search/' +
