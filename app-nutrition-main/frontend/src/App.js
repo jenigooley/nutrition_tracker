@@ -11,13 +11,30 @@ const App = React.createClass({
         height: ''
       },
       events: {
-        category: 'period',
-        pain: 0,
-        flow_amount: 0
+        category: '',
+        pain: '',
+        flow_amount: ''
       },
-      food: ''
+
+      food: 'beets',
+
+    foodChoices: {
+      number:{
+        foodName: '',
+        calories: ''},
+
+    nutrition:{
+      name: 'name',
+      calories: '',
+      sugar: '',
+      fat: '',
+      protein: '',
+      fiber: '',
+      calcium: ''
+     }
     }
-  },
+  };
+},
 
   postFood(e){
     e.preventDefault()
@@ -29,13 +46,46 @@ const App = React.createClass({
       headers: new Headers({
           'Content-Type': 'application/json'
       })
-    })
+    }).then(response => {
+        return response.json();
+    }).then(json => {
+        this.setState({
+            foodChoices:{
+              number: {
+                foodName: json.data['0'][0],
+                calories: json.data['0'][1]
+              }.then(fetch())
+            }
+        });
+    });
   },
 
+  postEvent(e){
+    e.preventDefault()
+    const data ={category: this.state.category,
+                 pain: this.state.pain,
+                 flow_amount: this.state.flow_amount}
+    console.log(this.state.category)
+    fetch('/events/jeni', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: new Headers({
+          'Content-Type': 'application/json'
+      })
+    }).then(response => {
+        return response.json();
+    })
+  },
 
   foodChange(e){
     this.setState({
       food: e.target.value
+    })
+  },
+
+  categoryChange(e){
+    this.setState({
+      category: e.target.value
     })
   },
 
@@ -57,26 +107,46 @@ const App = React.createClass({
 
   render() {
     return (
+
       <div className='App'>
-      <div className='header'></div>
-       <div className="App-header" style={{ display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
+       <div className='burger-image'></div>
         <UserInfo
-          name={this.state.user.name}
-          weight={this.state.user.weight}
-        height={this.state.user.height}
-        />
-        <Events
-          category={this.state.events.category}
-          pain={this.state.events.pain}
-          flow_amount={this.state.events.flow_amount}
-        />
-        </div>
-        <FoodInput
-          changeCallback={this.foodChange}
-          submitCallback={this.postFood}
-          food={this.state.food}
+            name={this.state.user.name}
+            weight={this.state.user.weight}
+            height={this.state.user.height}
           />
 
+          <FoodInput
+            changeCallback={this.foodChange}
+            submitCallback={this.postFood}
+            food={this.state.food}
+            />
+
+          <FoodChoices
+            foodName={this.state.foodName}
+            calories={this.state.calories}
+            />
+
+          <Nutrition
+            name={this.name}
+            calories={this.state.calories}
+            sugar={this.state.sugar}
+            fat={this.state.fat}
+            protein={this.state.protein}
+            fiber={this.state.fiber}
+            calcium={this.state.calcium}
+            />
+
+          <EventsInput
+            changeCallback={this.eventChange}
+            submitCallback={this.postEvent}
+          />
+
+          <Events
+            category={this.state.events.category}
+            pain={this.state.events.pain}
+            flow_amount={this.state.events.flow_amount}
+          />
       </div>
     );
   }
@@ -85,20 +155,35 @@ const App = React.createClass({
 
 const UserInfo = (props) => {
   return(
-    <div className='userBox'>
+    <div className='user-box'>
       <p>{props.name}</p>
-      <p>weight {props.weight}</p>
-      <p>height {props.height}</p>
+      <p>weight: {props.weight}</p>
+      <p>height: {props.height}</p>
     </div>
+  )
+}
+
+const EventsInput = (props) => {
+  return(
+    <form onSubmit={props.submitCallback}>
+      <select onChange={props.changeCallback}>
+        <option value={props.category}>period</option>
+        <option value={props.category}>sex</option>
+      </select>
+      <br/>
+      <input  type="range" min="1" max="5" value={props.pain} onChange={props.changeCallback}/>
+      <br/>
+      <input  type="range" min="1" max="5" value={props.flow_amount} onChange={props.changeCallback}/>
+    </form>
   )
 }
 
 const Events = (props) => {
   return (
-    <div className='eventBox'>
+    <div className='event-box'>
       <p>{props.category}</p>
-      <p>pain {props.pain}</p>
-      <p>flow {props.flow_amount}</p>
+      <p>pain: {props.pain}</p>
+      <p>flow: {props.flow_amount}</p>
     </div>
   )
 }
@@ -106,10 +191,34 @@ const Events = (props) => {
 const FoodInput = (props) => {
   return(
   <form onSubmit={props.submitCallback}>
-  <input type='text' value={props.food} onChange={props.changeCallback}/>
+    <input type='text' value={props.food} onChange={props.changeCallback}/>
   </form>
  )
 }
+
+const FoodChoices = (props) => {
+  return(
+    <div className='food-choice-box'>
+      <p>foodName: {props.foodName}</p>
+      <p>calories: {props.calories}</p>
+    </div>
+  )
+}
+
+const Nutrition = (props) => {
+  return(
+    <div className='nutrition-box'>
+      <p>name: {props.name}</p>
+      <p>calories: {props.calories}</p>
+      <p>sugar: {props.name}</p>
+      <p>fat: {props.name}</p>
+      <p>protein: {props.name}</p>
+      <p>fiber: {props.name}</p>
+      <p>calcium: {props.name}</p>
+    </div>
+  )
+}
+
 
 
 export default App;

@@ -28,7 +28,7 @@ class FoodApi():
         self.results = r_search['hits']
         """show user numbered list of top 3 results"""
         self.refined_results = {i: [item['fields']['item_name'], item['fields']['nf_calories']]
-                                for i, item in enumerate(self.results)}
+                                for i, item in enumerate(self.results, start=1)}
         # pprint.pprint(self.refined_results)
         return self.refined_results
 

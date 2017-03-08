@@ -64,7 +64,7 @@ def get_user(username):
 @app.route('/food/<username>', methods=['POST'])
 def get_food_nutriton(username):
     '''add food item'''
-    
+
     if request.method == 'POST':
         data = request.json
         print data        # print data
@@ -75,7 +75,7 @@ def get_food_nutriton(username):
 
 
 @app.route('/food/<username>/count', methods=['POST'])
-def get_nutrition_count(username):
+def get_nutrition_amount(username):
     if request.method == 'POST':
         data = request.json
         choice = data["choice"]
@@ -109,18 +109,21 @@ def get_nutrition_count(username):
         # else:
 #     return 'invalid request '
 
-@app.route('/events/<username>', methods = ['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/events/<username>', methods = ['GET', 'POST', 'DELETE'])
 def events(username):
     '''create, read, update or delete event data'''
 
     if request.method == 'POST':
+        '''takes json data containing category and category specific data
+        (pain, flow_amount or rating, amount)'''
         event_data = request.json
         category = event_data['category']
         print('CATEGORY', category)
         # date = event_data['date']
         user_id = session.query(models.User.id).filter_by(name=username).first()
-        print user_id[0]
-        event_obj = models.Event(category=category, user_id=user_id[0])
+        print user_id
+        event_obj = models.Event(category=category, user_id=user_id)
+        print event_obj
         session.add(event_obj)
 
         if category == 'period':
@@ -140,6 +143,7 @@ def events(username):
         return json.dumps(specific_event_dict)
 
     if request.method == 'GET':
+        '''takes data from url params, a date(m-d-y) and a category '''
         date = request.args.get('date')
         category = request.args.get('category')
         user_id = session.query(models.User.id).filter_by(name=username).first()
@@ -159,7 +163,6 @@ def events(username):
                                                         models.Event.date_time <= end_time):
 
             print ('EVENT DICT', event.as_dict_events())
-
             query_results.append(event.as_dict_events())
         return json.dumps(str(query_results))
 
