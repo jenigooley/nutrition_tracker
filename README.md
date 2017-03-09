@@ -5,8 +5,8 @@ Tracks user's nutrition intake data and other physical data
 
 The main, ongoing project is in the alchemy_nutri directory.
 An backend application that takes a food item and then stores the nutritional data for that user.
-It also takes user menstruation and sex activity data. An interface that displays and compares this data is on the way.
-This app uses Flask, SQLALchemy and Flask-SQLAlchemy.
+It also takes user menstruation and sex activity data. This app has a small frontend interface in React.js that allows a user to add food items, an interface that displays and compares this data is on the way.
+This app uses Flask, SQLALchemy, Flask-SQLAlchemy, React.js and  create-react-app. This app uses an api to the the Nutitionix.com database.
 
 
 ##Motivation
