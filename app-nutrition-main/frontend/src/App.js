@@ -26,8 +26,7 @@ const App = React.createClass({
       }
     }),
 
-    foodChoicesCalled: false,
-
+    displayChoices: false,
 
     nutrition:{
       name: 'name',
@@ -54,8 +53,9 @@ const App = React.createClass({
     }).then(response => {
         return response.json();
     }).then(json => {
+      debugger
       this.setState({
-        foodChoicesCalled: true,
+        displayChoices: true,
         foodChoices:[json[0], json[1], json[2]].map(option => {
           return{
             foodName: option[0],
@@ -95,6 +95,13 @@ const App = React.createClass({
     })
   },
 
+  toggleDisplayChoices(){
+    const toggle = !this.state.displayChoices
+    this.setState({
+      displayChoices: toggle
+    })
+  },
+
   componentDidMount(){
     fetch('/users/jeni')
     .then(response => {
@@ -112,17 +119,6 @@ const App = React.createClass({
   },
 
   render() {
-    let foodChoices = null
-    if(this.state.foodChoicesCalled){
-      foodChoices=this.state.foodChoices.map(option =>{
-        return(
-          <FoodChoices
-            foodName={option.foodName}
-            calories={option.calories}
-          />
-        )
-      });
-    }
     return (
      <div className='App'>
         <UserInfo
@@ -138,7 +134,8 @@ const App = React.createClass({
             />
 
           <FoodChoices
-            foodChoicesCalled={this.state.foodChoicesCalled}
+            toggleDisplayChoices={this.toggleDisplayChoices}
+            displayChoices={this.state.displayChoices}
             options={this.state.foodChoices}
           />
 
@@ -212,29 +209,80 @@ const FoodInput = (props) => {
  )
 }
 
-const FoodChoices = (props) => {
-  let optionsRender = null;
-  if(props.foodChoicesCalled){
-    optionsRender = props.options.map((option, i) => {
-        return(
-          <FoodChoice
-            key={i}
-            foodName={option.foodName}
-            calories={option.calories}
-           />
-          )
-        });
+const FoodChoices = React.createClass({
+  getInitialState(){
+    return{
+      foodName: '',
+      count: ''
+    }
+  },
+
+  optionChange(e){
+    this.setState({
+      foodName:e.target.value
+    })
+  },
+
+  countChange(e){
+    this.setState({
+      count:e.target.value
+    })
+  },
+
+  postChoice(e){
+    e.preventDefault()
+    const data ={choice:this.state.foodName, count: this.state.count}
+    debugger
+    fetch('/food/jeni/count', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: new Headers({
+          'Content-Type': 'application/json'
+      })
+    }).then(response => {
+      if(!response.ok){
+        throw Error(response.statusText);
       }
-      return(<form>{optionsRender}</form>)
-    };
+    }).then(response => {
+      this.props.toggleDisplayChoices()
+    }).catch(error => {
+      console.log(error)
+    })
+  },
+
+  render(){
+    let optionsRender = (
+      <div></div>
+    );
+    if(this.props.displayChoices){
+      optionsRender = (
+        <form onSubmit={this.postChoice}>
+          <input type='text' name='count' placeholder='Serving Amount' onChange={this.countChange}/>
+          {this.props.options.map((option, i) => {
+            return(
+              <FoodChoice
+                key={i}
+                foodId={i}
+                optionChange={this.optionChange}
+                foodName={option.foodName}
+                calories={option.calories}
+              />
+            )
+          })}
+        </form>
+      );
+    }
+    return optionsRender
+  }
+});
 
 const FoodChoice = (props) => {
   return(
     <div className='food-choice-box'>
       <label>
-      <input type='radio' value={props.foodName}/>
-      {props.foodName}
-      {props.calories}
+      <input type='radio' value={props.foodId} onChange={props.optionChange}/>
+      <p>{props.foodName}</p>
+      <p>{props.calories}</p>
       </label>
     </div>
   )
