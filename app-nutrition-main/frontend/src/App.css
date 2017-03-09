@@ -6,7 +6,6 @@ input  {
   height: 20px;
   font-family: sans-serif;
   font-size: 18px;
-  appearance: none;
   box-shadow: none;
   border-radius: none;
 }
@@ -18,7 +17,7 @@ input:focus {
 select   {
   display: block;
   margin: 0;
-  width: 50%;
+  width: 25%;
   font-family: sans-serif;
   font-size: 18px;
   appearance: none;
@@ -37,7 +36,6 @@ select   {
 }
 
 input[type=range] {
-    -webkit-appearance: none;
     background-color: pink;
     opacity: 1;
     width: 200px;
@@ -45,30 +43,28 @@ input[type=range] {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
     background-color: black;
     opacity: 0.5;
     width: 10px;
     height: 26px;
 }
 
-.burger-img{
-  background-image: url('mensis-burger.jpg');
-  background-size: 100vh;
-  height:500px;
-}
+
 
 .App {
-  border:10px solid mistyrose;
-  height:100vh;
+  /*height:100vh;*/
   align-items: baseline;
 }
 
-
+.burger-image{
+  height:50vh;
+  margin-top: 5vh;
+}
 
 .user-box{
-  flex: 1;
+  align-content: center;
   flex-direction: row;
+  width: 100vh;
   height: 150px;
   padding: 20px;
   color: back;
@@ -76,7 +72,6 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .food-choice-box{
-  display: None;
   background-color: #222;
   height: 150px;
   padding: 20px;

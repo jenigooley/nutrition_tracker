@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import burger from './mensis-burger.jpg'
 
 const App = React.createClass({
   getInitialState(){
@@ -16,12 +17,17 @@ const App = React.createClass({
         flow_amount: ''
       },
 
-      food: 'beets',
+      food: '',
 
-    foodChoices: {
-      number:{
+    foodChoices: Array.from(Array(3)).map(() => {
+      return{
         foodName: '',
-        calories: ''},
+        calories: '',
+      }
+    }),
+
+    foodChoicesCalled: false,
+
 
     nutrition:{
       name: 'name',
@@ -32,9 +38,8 @@ const App = React.createClass({
       fiber: '',
       calcium: ''
      }
-    }
-  };
-},
+   };
+  },
 
   postFood(e){
     e.preventDefault()
@@ -49,33 +54,34 @@ const App = React.createClass({
     }).then(response => {
         return response.json();
     }).then(json => {
-        this.setState({
-            foodChoices:{
-              number: {
-                foodName: json.data['0'][0],
-                calories: json.data['0'][1]
-              }.then(fetch())
-            }
+      this.setState({
+        foodChoicesCalled: true,
+        foodChoices:[json[0], json[1], json[2]].map(option => {
+          return{
+            foodName: option[0],
+            calories: option[1]
+          }
+        })
         });
     });
   },
 
-  postEvent(e){
-    e.preventDefault()
-    const data ={category: this.state.category,
-                 pain: this.state.pain,
-                 flow_amount: this.state.flow_amount}
-    console.log(this.state.category)
-    fetch('/events/jeni', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: new Headers({
-          'Content-Type': 'application/json'
-      })
-    }).then(response => {
-        return response.json();
-    })
-  },
+  // postEvent(e){
+  //   e.preventDefault()
+  //   const data ={category: this.state.category,
+  //                pain: this.state.pain,
+  //                flow_amount: this.state.flow_amount}
+  //   console.log(this.state.category)
+  //   fetch('/events/jeni', {
+  //     method: 'POST',
+  //     body: JSON.stringify(data),
+  //     headers: new Headers({
+  //         'Content-Type': 'application/json'
+  //     })
+  //   }).then(response => {
+  //       return response.json();
+  //   })
+  // },
 
   foodChange(e){
     this.setState({
@@ -106,10 +112,19 @@ const App = React.createClass({
   },
 
   render() {
+    let foodChoices = null
+    if(this.state.foodChoicesCalled){
+      foodChoices=this.state.foodChoices.map(option =>{
+        return(
+          <FoodChoices
+            foodName={option.foodName}
+            calories={option.calories}
+          />
+        )
+      });
+    }
     return (
-
-      <div className='App'>
-       <div className='burger-image'></div>
+     <div className='App'>
         <UserInfo
             name={this.state.user.name}
             weight={this.state.user.weight}
@@ -123,9 +138,9 @@ const App = React.createClass({
             />
 
           <FoodChoices
-            foodName={this.state.foodName}
-            calories={this.state.calories}
-            />
+            foodChoicesCalled={this.state.foodChoicesCalled}
+            options={this.state.foodChoices}
+          />
 
           <Nutrition
             name={this.name}
@@ -147,6 +162,7 @@ const App = React.createClass({
             pain={this.state.events.pain}
             flow_amount={this.state.events.flow_amount}
           />
+          <img className='burger-image' src={burger}/>
       </div>
     );
   }
@@ -197,10 +213,29 @@ const FoodInput = (props) => {
 }
 
 const FoodChoices = (props) => {
+  let optionsRender = null;
+  if(props.foodChoicesCalled){
+    optionsRender = props.options.map((option, i) => {
+        return(
+          <FoodChoice
+            key={i}
+            foodName={option.foodName}
+            calories={option.calories}
+           />
+          )
+        });
+      }
+      return(<form>{optionsRender}</form>)
+    };
+
+const FoodChoice = (props) => {
   return(
     <div className='food-choice-box'>
-      <p>foodName: {props.foodName}</p>
-      <p>calories: {props.calories}</p>
+      <label>
+      <input type='radio' value={props.foodName}/>
+      {props.foodName}
+      {props.calories}
+      </label>
     </div>
   )
 }
