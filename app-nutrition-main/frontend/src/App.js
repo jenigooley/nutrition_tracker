@@ -11,11 +11,6 @@ const App = React.createClass({
         weight: '',
         height: ''
       },
-      events: {
-        category: '',
-        pain: '',
-        flow_amount: ''
-      },
 
       food: '',
 
@@ -65,23 +60,6 @@ const App = React.createClass({
         });
     });
   },
-
-  // postEvent(e){
-  //   e.preventDefault()
-  //   const data ={category: this.state.category,
-  //                pain: this.state.pain,
-  //                flow_amount: this.state.flow_amount}
-  //   console.log(this.state.category)
-  //   fetch('/events/jeni', {
-  //     method: 'POST',
-  //     body: JSON.stringify(data),
-  //     headers: new Headers({
-  //         'Content-Type': 'application/json'
-  //     })
-  //   }).then(response => {
-  //       return response.json();
-  //   })
-  // },
 
   foodChange(e){
     this.setState({
@@ -149,16 +127,6 @@ const App = React.createClass({
             calcium={this.state.calcium}
             />
 
-          <EventsInput
-            changeCallback={this.eventChange}
-            submitCallback={this.postEvent}
-          />
-
-          <Events
-            category={this.state.events.category}
-            pain={this.state.events.pain}
-            flow_amount={this.state.events.flow_amount}
-          />
           <img className='burger-image' src={burger}/>
       </div>
     );
@@ -172,31 +140,6 @@ const UserInfo = (props) => {
       <p>{props.name}</p>
       <p>weight: {props.weight}</p>
       <p>height: {props.height}</p>
-    </div>
-  )
-}
-
-const EventsInput = (props) => {
-  return(
-    <form onSubmit={props.submitCallback}>
-      <select onChange={props.changeCallback}>
-        <option value={props.category}>period</option>
-        <option value={props.category}>sex</option>
-      </select>
-      <br/>
-      <input  type="range" min="1" max="5" value={props.pain} onChange={props.changeCallback}/>
-      <br/>
-      <input  type="range" min="1" max="5" value={props.flow_amount} onChange={props.changeCallback}/>
-    </form>
-  )
-}
-
-const Events = (props) => {
-  return (
-    <div className='event-box'>
-      <p>{props.category}</p>
-      <p>pain: {props.pain}</p>
-      <p>flow: {props.flow_amount}</p>
     </div>
   )
 }
@@ -280,7 +223,7 @@ const FoodChoice = (props) => {
   return(
     <div className='food-choice-box'>
       <label>
-      <input type='radio' value={props.foodId} onChange={props.optionChange}/>
+      <input type='radio' value={props.foodId } onChange={props.optionChange}/>
       <p>{props.foodName}</p>
       <p>{props.calories}</p>
       </label>
@@ -305,3 +248,56 @@ const Nutrition = (props) => {
 
 
 export default App;
+
+// postEvent(e){
+//   e.preventDefault()
+//   const data ={category: this.state.category,
+//                pain: this.state.pain,
+//                flow_amount: this.state.flow_amount}
+//   console.log(this.state.category)
+//   fetch('/events/jeni', {
+//     method: 'POST',
+//     body: JSON.stringify(data),
+//     headers: new Headers({
+//         'Content-Type': 'application/json'
+//     })
+//   }).then(response => {
+//       return response.json();
+//   })
+// },
+
+// <EventsInput
+//   changeCallback={this.eventChange}
+//   submitCallback={this.postEvent}
+// />
+//
+// <Events
+//   category={this.state.events.category}
+//   pain={this.state.events.pain}
+//   flow_amount={this.state.events.flow_amount}
+// />
+
+// const EventsInput = (props) => {
+//   return(
+//     <form onSubmit={props.submitCallback}>
+//       <select onChange={props.changeCallback}>
+//         <option value={props.category}>period</option>
+//         <option value={props.category}>sex</option>
+//       </select>
+//       <br/>
+//       <input  type="range" min="1" max="5" value={props.pain} onChange={props.changeCallback}/>
+//       <br/>
+//       <input  type="range" min="1" max="5" value={props.flow_amount} onChange={props.changeCallback}/>
+//     </form>
+//   )
+// }
+//
+// const Events = (props) => {
+//   return (
+//     <div className='event-box'>
+//       <p>{props.category}</p>
+//       <p>pain: {props.pain}</p>
+//       <p>flow: {props.flow_amount}</p>
+//     </div>
+//   )
+// }
